@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import {ref, watch } from 'vue';
+import {onWatcherCleanup, ref, watchEffect } from 'vue';
 
-const productId = ref("")
+const productId = ref("Product1");
 const product = ref(null)
 
-watch(productId, async (newVal, oldVal) => {
-    console.log("Fetching: ", newVal)
-    if (newVal) {
-      const response = await fetch(`/${newVal}.json`);
-      product.value = await response.json();
-    } else {
-      product.value = null
-    }
-  },
-  { immediate: true }
-)
+watchEffect(async () => {
+  onWatcherCleanup(() => {
+    console.log("Cleanup watcher")
+  })
+
+  const response = await fetch(`/${productId.value}.json`);
+  product.value = await response.json();
+});
+
 
 </script>
 
